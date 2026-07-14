@@ -762,7 +762,7 @@ Array.Sort(numbers);
 
 정렬 후:
 ```csharp
-
+[0]:36 , [1]:50 , [2]:87 , [3]:99
 ```
 
 - 작은 값부터 큰 값 순서로 정렬
@@ -775,8 +775,8 @@ Array.Sort(numbers);
 배열 내용을 다른 배열로 복사
 
 ```csharp
-int[] numbers = { 36, 50, 87, 99 };
-int[] copyNumbers3 = new int;
+int[] numbers      = { 36, 50, 87, 99 };
+int[] copyNumbers3 = new int[7];
 
 numbers.CopyTo(copyNumbers3, 3);
 ```
@@ -788,7 +788,14 @@ numbers.CopyTo(copyNumbers3, 3);
 
 복사 후 예시:
 ```csharp
-
+// copyNumbers3 내용:
+// [0] 0
+// [1] 0
+// [2] 0
+// [3] 36
+// [4] 50
+// [5] 87
+// [6] 99
 ```
 
 형식:
