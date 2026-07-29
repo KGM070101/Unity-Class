@@ -1269,4 +1269,311 @@ StopCoroutine(co);
 ```csharp
 StopAllCoroutines();
 ```
+---
+
+## 람다, 델리게이트, 캡처, 클로저
+
+### 1. 델리게이트에 메서드 넣기
+
+```csharp
+Action<int, string> action;
+action = Test;
+action.Invoke(1, "Hello");
+action(1, "Hello");
+```
+
+- `Action<int, string>`은 `int`, `string`을 인자로 받고 반환값은 없는 함수 타입이다.
+- `action = Test;`는 `Test(int a, string b)` 메서드를 델리게이트 변수에 넣은 것이다.
+- `action.Invoke(1, "Hello")`와 `action(1, "Hello")`는 같은 호출이다.
+
+---
+
+### 2. 메서드 대신 람다 넣기
+
+```csharp
+action = (a, b) => print($"Lambda : {a}, {b}");
+action(2, "World");
+```
+
+- `(a, b) => ...`는 이름 없는 함수를 만드는 람다식이다.
+- 델리게이트 변수에 기존 메서드 대신 람다를 다시 대입할 수 있다.
+- `action(2, "World")`를 호출하면 람다가 실행된다.
+
+---
+
+### 3. 인자 없는 람다와 인자 있는 람다
+
+```csharp
+Action action1 = () => print("Hello Lambda");
+action1();
+
+Action<int> action2 = (a) => print($"Lambda : {a}");
+action2(3);
+```
+
+- `action1`은 인자 0개, 반환값 없음.
+- `action2`는 `int` 인자 1개, 반환값 없음.
+- 인자가 1개일 때는 `a => ...`처럼 괄호를 생략할 수 있다.
+
+---
+
+### 4. Func와 반환값 있는 람다
+
+```csharp
+Func<int> lambda2 = () => 5 * 5;
+print($"lambda2 : {lambda2()}");
+
+Func<int, int> lambda3 = (x) => x * x;
+print($"lambda3 : {lambda3(5)}");
+
+Func<int, int> lambda4 = (int x) => x * outer;
+print($"lambda4 : {lambda4(5)}");
+```
+
+- `Func<int>`는 인자 없이 `int`를 반환하는 함수 타입이다.
+- `Func<int, int>`는 `int` 하나를 입력받아 `int`를 반환하는 함수 타입이다.
+- `Func`에서 마지막 제네릭 타입은 반환 타입, 앞의 타입들은 입력 타입이다.
+- `lambda4`는 바깥 변수 `outer`를 함께 사용한다(캡처).
+
+---
+
+### 5. 내부 함수와 델리게이트
+
+```csharp
+int Square(int x)
+{
+    return x * x;
+}
+
+Func<int, int> square = Square;
+int result = square(4);
+print($"Square : {result}");
+```
+
+- `Square`는 `Start()` 안에 정의한 지역 함수다.
+- `Func<int, int>`에 `Square`를 넣으면 함수도 변수처럼 다룰 수 있다.
+- `square(4)`는 `Square(4)`와 같은 결과를 낸다.
+
+---
+
+### 6. 캡처와 클로저
+
+```csharp
+int outer = 15;
+
+int Add(int x)
+{
+    return x + outer;
+}
+
+Func<int, int> add = Add;
+print($"add = {add(5)}");
+
+Func<int, int> add2 = Add;
+print($"add = {add2(15)}");
+```
+
+- `outer`는 바깥에 있는 지역 변수다.
+- `Add`가 `outer`를 사용하면 외부 변수를 캡처한 것이다.
+- 함수가 외부 변수까지 같이 기억하고 사용하는 상태를 클로저라고 부른다.
+- `add(5)`는 `20`, `add2(15)`는 `30`을 출력한다.
+
+---
+
+### 7. for문에서 캡처할 때 주의할 점
+
+```csharp
+List<Action> actions = new List<Action>();
+
+for (int i = 0; i < 3; i++)
+{
+    int temp = i;
+    // actions.Add(() => print(i));   // 3, 3, 3
+    actions.Add(() => print(temp));   // 0, 1, 2
+}
+
+foreach (Action act in actions)
+    act();
+```
+
+- `() => print(i)`처럼 `i`를 직접 캡처하면 모든 람다가 같은 `i` 변수를 본다.
+- for문이 끝난 뒤 `i` 값은 3이라 나중에 실행하면 `3, 3, 3`이 찍힌다.
+- `temp`를 반복마다 새로 만들고 `temp`를 캡처하면 `0, 1, 2`가 제대로 출력된다.
+
+---
+
+### 8. 람다식과 람다문
+
+#### 람다식 (expression body)
+
+```csharp
+Action lambda1 = () => print("Hello Lambda");
+lambda1();
+
+Func<int> lambda2 = () => 5 * 5;
+print($"lambda2 : {lambda2()}");
+
+Func<int, int> lambda3 = (x) => x * x;
+print($"lambda3 : {lambda3(5)}");
+
+Func<int, int> lambda4 = (int x) => x * outer;
+print($"lambda4 : {lambda4(5)}");
+
+Action<string> append = (x) => print($"Append : {x}");
+append("Test");
+```
+
+- 한 줄 표현식으로 동작이나 반환값을 바로 표현하는 형태다.
+- 짧은 계산이나 간단한 동작에 쓰기 좋다.
+
+#### 람다문 (statement body)
+
+```csharp
+Action<string> lambda5 = name =>
+{
+    string hello = $"Hello {name}";
+    print("Lambda5 : " + hello);
+};
+lambda5("Unit");
+
+Func<string, int, bool> lambda6 = (x, y) =>
+{
+    return x.Length > y;
+};
+print($"Lambda6 : {lambda6("Unity", 3)}");
+```
+
+- 중괄호를 써서 여러 줄 코드를 작성하는 형태다.
+- `return`이 필요한 경우 직접 써야 한다.
+
+---
+
+### 9. Predicate
+
+```csharp
+Predicate<int> lambda7 = (x) =>
+{
+    string str = "Unity";
+    return str.Length > x;
+};
+print($"Lambda7 : {lambda7(3)}");
+```
+
+- `Predicate<int>`는 `int` 하나를 입력받고 `bool`을 반환하는 델리게이트 타입이다.
+- `Predicate<T>`는 입력 타입 `T`만 바꿀 수 있고, 반환 타입은 항상 `bool`이다.
+- 리스트 검색, 조건 필터링 같은 곳에서 많이 쓰인다.
+
+---
+
+## 제네릭과 일반 클래스
+
+### 1. 일반 클래스 A
+
+```csharp
+private class A { }
+```
+
+- 내용 없는 간단한 클래스다.
+- 제네릭 메서드가 사용자 정의 타입도 받을 수 있다는 예시로 사용된다.
+
+---
+
+### 2. 제네릭 메서드 `Print<T>`
+
+```csharp
+private void Print<T>(T value)
+{
+    print($"print : {value}");
+}
+```
+
+- `<T>`는 타입 매개변수다.
+- `T`에 `int`, `string`, `A` 등 다양한 타입을 넣을 수 있다.
+
+```csharp
+Print<int>(5);
+Print<string>("Unity");
+Print(new A());
+```
+
+- 하나의 메서드로 여러 타입 값을 출력할 수 있다.
+
+---
+
+### 3. 제네릭 클래스 `B<T>`
+
+```csharp
+private class B<T>
+{
+    List<T> datas = new List<T>();
+
+    public void Add(T data)
+    {
+        datas.Add(data);
+    }
+
+    public void PrintAll()
+    {
+        foreach (T data in datas)
+            print($"data : {data}");
+    }
+}
+```
+
+```csharp
+B<int> datas = new B<int>();
+datas.Add(1);
+datas.Add(3);
+datas.Add(2);
+datas.Add(5);
+datas.PrintAll();
+```
+
+- `B<T>`는 특정 타입만 저장하는 제네릭 컨테이너다.
+- `T`를 `int`로 정하면 `List<int>`처럼 동작하고, 컴파일 단계에서 타입 검사를 받을 수 있다.
+
+---
+
+### 4. 제네릭 없이 `object`를 쓰는 클래스 `C`
+
+```csharp
+private class C
+{
+    List<object> datas = new List<object>();
+
+    public void Add(object data)
+    {
+        datas.Add(data);
+    }
+
+    public void PrintAll()
+    {
+        foreach (object data in datas)
+            print($"data : {data}");
+    }
+}
+```
+
+```csharp
+C datas2 = new C();
+datas2.Add(1);
+datas2.Add(3);
+datas2.Add(2);
+datas2.Add(5);
+datas2.PrintAll();
+```
+
+- `C`는 모든 값을 `object`로 받아서 저장한다.
+- 어떤 타입이든 넣을 수 있지만, 나중에 실제 타입으로 사용할 때 형변환이 필요할 수 있다.
+
+---
+
+### 5. `B<T>`와 `C` 비교
+
+| 항목           | `B<T>`                | `C`                        |
+|----------------|-----------------------|----------------------------|
+| 저장 방식      | 같은 타입만 저장     | `object`로 모든 타입 저장 |
+| 타입 검사      | 컴파일 단계에서 강함 | 런타임까지 미뤄짐          |
+| 형변환 필요성  | 적음                  | 많을 수 있음              |
+| 안정성         | 더 높음               | 더 낮음                    |
 
