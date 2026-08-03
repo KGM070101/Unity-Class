@@ -21,10 +21,10 @@
   - [언박싱(Unboxing)](Unity_Class.md#15-언박싱unboxing)
 
 - [클래스 구성 요소](Unity_Class.md#4-클래스-구성-요소)
-  - [필드(Field)](Unity_Class.md#필드field)
-  - [프로퍼티(Property)](Unity_Class.md#프로퍼티property)
-  - [메서드(Method)](Unity_Class.md#메서드method)
-  - [생성자(Constructor)](Unity_Class.md#생성자constructor)
+  - [필드(Field)](Unity_Class.md#8-필드field)
+  - [프로퍼티(Property)](Unity_Class.md#9-프로퍼티property)
+  - [메서드(Method)](Unity_Class.md#10-메서드method)
+  - [생성자(Constructor)](Unity_Class.md#11-생성자constructor)
 
 ### Unity 기본
 - [Unity 기본 / MonoBehaviour](./Unity_Class.md#unity-기본)
