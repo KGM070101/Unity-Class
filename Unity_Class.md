@@ -27,8 +27,420 @@ public class Creator : MonoBehaviour
     }
 }
 ```
+---
+# C# 기초 용어 정리
+
+
 
 ---
+
+## 1. 클래스(Class)
+
+클래스는 **객체를 만들기 위한 설계도**다.  
+클래스 안에는 데이터와 기능을 함께 넣을 수 있다.
+
+```csharp
+class Player
+{
+    public int hp;
+    public string name;
+
+    public void Attack()
+    {
+        Console.WriteLine("Attack!");
+    }
+}
+```
+
+위 코드에서 `Player`가 클래스다.  
+이 클래스는 `hp`, `name`이라는 데이터를 가지고 있고, `Attack()`이라는 기능도 가진다.
+
+---
+
+## 2. 객체(Object)와 인스턴스(Instance)
+
+객체와 인스턴스는 거의 같은 의미로 사용된다.  
+보통은 **클래스를 실제로 만든 결과물**을 말한다.
+
+```csharp
+Player player1 = new Player();
+```
+
+여기서 `new Player()`로 만들어진 것이 객체이자 인스턴스다.  
+`player1`은 그 인스턴스를 가리키는 변수다.
+
+### 핵심
+- 클래스: 틀
+- 인스턴스: 그 틀로 만든 실제 대상
+- 변수: 인스턴스를 가리키는 이름
+
+---
+
+## 3. 변수(Variable)
+
+변수는 **값을 저장하거나 참조를 저장하는 이름**이다.
+
+```csharp
+int a = 10;
+string text = "hello";
+Player player = new Player();
+```
+
+여기서:
+- `a`는 `10`이라는 값을 가진다.
+- `text`는 문자열을 가리킨다.
+- `player`는 `Player` 객체를 가리킨다.
+
+변수는 타입에 따라 동작이 다르다.
+
+---
+
+## 4. 값 타입(Value Type)
+
+값 타입은 **값 자체를 직접 저장하는 타입**이다.  
+대표적으로 다음이 있다.
+
+- `int`
+- `float`
+- `double`
+- `bool`
+- `char`
+- `struct`
+
+예:
+
+```csharp
+int num1 = 100;
+int num2 = num1;
+```
+
+이 코드에서 `num2 = num1`은 **값 복사**다.  
+즉 `num1`의 내용인 `100`이 그대로 `num2`에 복사된다.
+
+```csharp
+num2 = 200;
+
+Console.WriteLine(num1); // 100
+Console.WriteLine(num2); // 200
+```
+
+둘은 서로 독립적이다.
+
+### 값 타입의 특징
+- 변수 안에 값 자체가 들어간다.
+- 대입하면 값이 복사된다.
+- 하나를 바꿔도 다른 변수에는 영향이 없다.
+
+---
+
+## 5. 참조 타입(Reference Type)
+
+참조 타입은 **객체 자체가 아니라 객체를 가리키는 참조를 저장**한다.  
+대표적으로 다음이 있다.
+
+- `string`
+- `class`
+- `array`
+
+예:
+
+```csharp
+string str1 = "abc";
+string str2 = str1;
+```
+
+이 경우 `str2`는 `str1`이 가리키던 참조를 그대로 복사한다.  
+즉 두 변수는 같은 문자열 객체를 가리킬 수 있다.
+
+```csharp
+Console.WriteLine(Object.ReferenceEquals(str1, str2));
+```
+
+이런 비교가 가능한 이유는 `string`이 참조 타입이기 때문이다.
+
+### 참조 타입의 특징
+- 변수 안에 객체 자체가 들어가는 것이 아니라 참조가 들어간다.
+- 대입하면 참조가 복사된다.
+- 같은 객체를 여러 변수가 같이 가리킬 수 있다.
+
+---
+
+## 6. 레퍼런스(Reference)
+
+레퍼런스는 **객체를 가리키는 정보**다.  
+즉 “이 객체가 어디에 있는지”를 나타내는 개념이다.
+
+```csharp
+Player p1 = new Player();
+Player p2 = p1;
+```
+
+여기서 `p1`과 `p2`는 서로 다른 변수가 아니라, **같은 객체를 가리키는 두 개의 이름**처럼 동작할 수 있다.
+
+```csharp
+p2.hp = 50;
+Console.WriteLine(p1.hp); // 50
+```
+
+둘이 같은 객체를 보고 있기 때문이다.
+
+---
+
+## 7. 값 복사와 참조 복사
+
+### 값 복사
+값 자체가 복사된다.
+
+```csharp
+int a = 5;
+int b = a;
+```
+
+### 참조 복사
+객체를 가리키는 정보가 복사된다.
+
+```csharp
+Player a = new Player();
+Player b = a;
+```
+
+### 차이점
+값 복사는 완전히 독립적이지만, 참조 복사는 같은 객체를 공유할 수 있다.
+
+---
+
+## 8. 필드(Field)
+
+필드는 클래스 안에 선언된 **직접적인 변수**다.
+
+```csharp
+class Player
+{
+    public int hp;
+    public string name;
+}
+```
+
+여기서 `hp`, `name`이 필드다.
+
+### 특징
+- 클래스 내부 데이터 저장용
+- 보통 외부에서 직접 접근하지 않도록 설계하는 경우가 많음
+- 객체의 상태를 표현할 때 사용
+
+---
+
+## 9. 프로퍼티(Property)
+
+프로퍼티는 **필드처럼 보이지만, 값을 읽고 쓰는 방법을 제어하는 기능**이다.
+
+```csharp
+class Player
+{
+    public int Hp { get; set; }
+}
+```
+
+이 코드는 겉보기엔 변수처럼 보이지만, 실제로는 `get`과 `set`을 통해 값을 처리한다.
+
+### 자동 구현 프로퍼티
+```csharp
+public int Hp { get; set; }
+```
+
+이 형태는 C#이 알아서 내부 필드를 만든 것처럼 처리해준다.
+
+### 직접 제어하는 프로퍼티
+```csharp
+private int hp;
+
+public int Hp
+{
+    get { return hp; }
+    set
+    {
+        if (value < 0)
+            hp = 0;
+        else
+            hp = value;
+    }
+}
+```
+
+여기서는 값을 넣을 때 조건을 추가할 수 있다.
+
+### 특징
+- 외부에서는 변수처럼 보임
+- 내부적으로는 함수처럼 동작할 수 있음
+- 검증, 제한, 계산 등을 넣기 좋음
+
+---
+
+## 10. 메서드(Method)
+
+메서드는 **동작을 실행하는 함수**다.
+
+```csharp
+class Player
+{
+    public void Attack()
+    {
+        Console.WriteLine("Attack!");
+    }
+}
+```
+
+호출할 때는 괄호 `()`를 사용한다.
+
+```csharp
+player.Attack();
+```
+
+### 특징
+- 어떤 행동을 수행함
+- 결과를 반환할 수도 있고, 안 할 수도 있음
+- 괄호가 붙는다
+
+```csharp
+public int GetHp()
+{
+    return hp;
+}
+```
+
+이것도 메서드다.
+
+---
+
+## 11. 생성자(Constructor)
+
+생성자는 **객체가 만들어질 때 자동으로 실행되는 특별한 메서드**다.
+
+```csharp
+class Player
+{
+    public int hp;
+
+    public Player()
+    {
+        hp = 100;
+    }
+}
+```
+
+### 특징
+- 클래스 이름과 같다
+- 반환형이 없다
+- `new`로 객체를 만들 때 자동 실행된다
+
+```csharp
+Player p = new Player();
+```
+
+위 코드에서 `Player()` 생성자가 실행된다.
+
+---
+
+## 12. 문자열(String)
+
+`string`은 참조 타입이다.  
+하지만 **불변(immutable)** 이기 때문에 내용 자체를 수정할 수 없다.
+
+```csharp
+string s1 = "abc";
+string s2 = s1;
+```
+
+여기서 `s2`는 `s1`의 참조를 복사한 것이다.
+
+```csharp
+s2 = "def";
+```
+
+이 코드는 기존 문자열 `"abc"`를 수정하는 것이 아니라, `s2`가 다른 문자열 `"def"`를 가리키게 하는 것이다.
+
+### 중요
+- `string`은 참조 타입
+- 내용은 바꿀 수 없음
+- 대입하면 참조가 복사됨
+
+---
+
+## 13. `ReferenceEquals`
+
+`ReferenceEquals`는 **두 변수가 같은 객체를 가리키는지** 확인한다.
+
+```csharp
+string a = "hello";
+string b = a;
+
+Console.WriteLine(Object.ReferenceEquals(a, b));
+```
+
+이 경우 `true`가 나올 수 있다.
+
+하지만 값 타입에는 보통 쓰지 않는다.
+
+```csharp
+int x = 10;
+int y = x;
+Console.WriteLine(Object.ReferenceEquals(x, y));
+```
+
+이 경우는 박싱(Boxing) 때문에 헷갈릴 수 있고, 값 비교 용도로는 적절하지 않다.
+
+---
+
+## 14. 박싱(Boxing)
+
+박싱은 **값 타입을 object 타입으로 감싸는 과정**이다.
+
+```csharp
+int num = 10;
+object obj = num;
+```
+
+여기서 `num`은 `object`로 바뀌면서 박싱된다.
+
+### 왜 중요한가
+`ReferenceEquals(num1, num2)`처럼 값 타입을 참조 비교에 넣으면, 내부적으로 박싱이 일어나서 별도 객체가 만들어질 수 있다.
+
+---
+
+## 15. 언박싱(Unboxing)
+
+박싱된 값을 다시 원래 값 타입으로 꺼내는 과정이다.
+
+```csharp
+object obj = 10;
+int num = (int)obj;
+```
+
+---
+
+## 16. 메서드와 프로퍼티 구분법
+
+### 메서드
+- 동작을 한다
+- 괄호 `()`가 있다
+
+```csharp
+str.Split(',');
+str.Trim();
+str.Replace(" ", "");
+```
+
+### 프로퍼티
+- 상태나 값을 읽는다
+- 괄호가 없다
+
+```csharp
+str.Length
+array.Length
+```
+
+---
+
 
 ## 생명주기 함수
 
