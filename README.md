@@ -3,22 +3,22 @@
 ## 목차
 
 ### 용어 정리
-- [기본 개념](Unity_Class.md#1-기본-개념)
-  - [클래스(Class)](Unity_Class.md#클래스class)
-  - [객체(Object)와 인스턴스(Instance)](Unity_Class.md#객체object와-인스턴스instance)
-  - [변수(Variable)](Unity_Class.md#변수variable)
+- [용어](Unity_Class.md#c-기초-용어-정리)
+  - [클래스(Class)](Unity_Class.md#1-클래스class)
+  - [객체(Object)와 인스턴스(Instance)](Unity_Class.md#2-객체object와-인스턴스instance)
+  - [변수(Variable)](Unity_Class.md#3-변수variable)
 
 - [타입](Unity_Class.md#2-타입)
-  - [값 타입(Value Type)](Unity_Class.md#값-타입value-type)
-  - [참조 타입(Reference Type)](Unity_Class.md#참조-타입reference-type)
-  - [문자열(String)](Unity_Class.md#문자열string)
+  - [값 타입(Value Type)](Unity_Class.md#4-값-타입value-type)
+  - [참조 타입(Reference Type)](Unity_Class.md#5-참조-타입reference-type)
+  - [문자열(String)](Unity_Class.md#12-문자열string)
 
-- [참조와 복사](Unity_Class.md#3-참조와-복사)
-  - [레퍼런스(Reference)](Unity_Class.md#레퍼런스reference)
-  - [값 복사와 참조 복사](Unity_Class.md#값-복사와-참조-복사)
-  - [ReferenceEquals](Unity_Class.md#referenceequals)
-  - [박싱(Boxing)](Unity_Class.md#박싱boxing)
-  - [언박싱(Unboxing)](Unity_Class.md#언박싱unboxing)
+- [참조와 복사](Unity_Class.md#7-값-복사와-참조-복사)
+  - [레퍼런스(Reference)](Unity_Class.md#6-레퍼런스reference)
+  - [값 복사와 참조 복사](Unity_Class.md#7-값-복사와-참조-복사)
+  - [ReferenceEquals](Unity_Class.md#13-referenceequals)
+  - [박싱(Boxing)](Unity_Class.md#14-박싱boxing)
+  - [언박싱(Unboxing)](Unity_Class.md#15-언박싱unboxing)
 
 - [클래스 구성 요소](Unity_Class.md#4-클래스-구성-요소)
   - [필드(Field)](Unity_Class.md#필드field)
