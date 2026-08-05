@@ -62,6 +62,7 @@
   - [for문에서 캡처할 때 주의할 점](./Unity_Class.md#7-for문에서-캡처할-때-주의할-점)
   - [람다식과 람다문](./Unity_Class.md#8-람다식과-람다문)
   - [Predicate](./Unity_Class.md#9-predicate)
+  - [람다 특성](./Unity_Class.md#10-람다-특성)
 - [제네릭과 일반 클래스](./Unity_Class.md#제네릭과-일반-클래스)
   - [일반 클래스 A](./Unity_Class.md#1-일반-클래스-a)
   - [제네릭 메서드 `Print<T>`](./Unity_Class.md#2-제네릭-메서드-printt)
