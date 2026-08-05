@@ -1877,6 +1877,93 @@ print($"Lambda7 : {lambda7(3)}");
 
 ---
 
+### 10. 람다 특성
+
+
+## 델리게이트에 의해 타입이 결정됨
+
+- 람다는 단독으로 타입이 있는 게 아님.
+- 반드시 `Func`, `Action`, `Comparison` 같은 델리게이트 타입에 들어가야 함.
+- 델리게이트가 파라미터 타입과 리턴 타입을 정함.
+
+```csharp
+Func<int, string> lambda = (x) => x.ToString();
+```
+
+## 타입 자체가 없어서 object 멤버 접근 불가
+
+- 람다 자체는 `object`처럼 다룰 수 없음.
+- 람다식 결과에 `ToString()` 같은 object 멤버를 바로 붙이는 건 안 됨.
+
+```csharp
+// Func<int, string> lambda = ((int x) => x).ToString(); // 불가능
+```
+
+## 타입 자체가 없어서 캐스팅 불가
+
+- 람다는 독립된 타입이 아니므로 직접 캐스팅할 수 없음.
+- 델리게이트 형식으로 받아서 써야 함.
+
+---
+
+## 델리게이트 형식과 반드시 일치해야 함
+
+- 람다의 파라미터 개수, 파라미터 타입, 리턴 타입이 델리게이트와 맞아야 함.
+
+```csharp
+Func<int, bool> lambda = (int x) => x; // x 그 자체를 반환하기 때문에 오류
+```
+```csharp
+Func<int, bool> lambda = (int x) =>
+{
+    return x>10; //반환형이 bool이라 정상작동
+};
+```
+---
+
+## var로 형식 추론 불가
+
+- `var`는 오른쪽 식을 보고 타입을 추론하지만 람다는 그 자체만으로는 타입이 정해지지 않음.
+- 그래서 람다는 `var`로 선언할 수 없음.
+
+```csharp
+// var lambda = (int x) => x; // 불가능
+```
+---
+## out, ref 파라미터 사용 불가
+
+- 일반 메서드처럼 `out`, `ref`를 람다 파라미터에 직접 쓰는 건 안 됨.
+
+```csharp
+// Action<int> lambda = (out int x) => x = 10; // 불가능
+// Action<int> lambda = (ref int x) => x = 10; // 불가능
+```
+---
+## 클로저는 레퍼런스로 캡처됨
+
+- 람다는 바깥 변수를 캡처할 수 있음.
+- 캡처된 변수는 람다 내부에서 사용할 수 있음.
+
+```csharp
+List<string> names = new List<string>() { "이순신", "강감찬" };
+
+List<Action> actions = new List<Action>();
+foreach (string name in names)
+{
+    actions.Add(() => print($"name : {name}"));
+}
+```
+---
+## 람다는 델리게이트를 통해서만 사용됨
+
+- `ForEach`, `Sort`, 이벤트 등록 같은 곳에서 람다를 많이 사용함.
+- 람다의 실제 사용처는 결국 델리게이트가 필요한 자리임.
+
+```csharp
+items.ForEach((x) => print(x));
+numbers.Sort((x, y) => y.CompareTo(x));
+```
+---
 ## 제네릭과 일반 클래스
 
 ### 1. 일반 클래스 A
