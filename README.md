@@ -59,6 +59,11 @@
     - [protected](./Unity_Class.md#protected)
     - [public](./Unity_Class.md#public)
 
+### 상속 / 다형성
+- [abstract](./Unity_Class.md#abstract)
+- [virtual](./Unity_Class.md#virtual)
+- [override](./Unity_Class.md#override)
+
 ### 람다 / 델리게이트 / 제네릭
 - [람다, 델리게이트, 캡처, 클로저](./Unity_Class.md#람다-델리게이트-캡처-클로저)
   - [델리게이트에 메서드 넣기](./Unity_Class.md#1-델리게이트에-메서드-넣기)

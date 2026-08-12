@@ -2224,3 +2224,121 @@ public class GameManager : MonoBehaviour
 }
 ```
 - `Move()`의 접근 제한자가 `public`이기 때문에, 다른 스크립트에서도 자유롭게 `Move()`를 호출할 수 있다.
+
+---
+
+## abstract
+**부모가 뼈대를 제공**하고 **자식이 세부동작을 반드시 구현**하는 키워드이다.
+
+### abstract 규칙
+1. `abstract` 클래스는 **`new`로 만들 수 없다**.
+1. `abstract` 메서드는 **몸통`{}`이 없어야 한다**.
+1. `abstract` 메서드는 가진 클래스를 반드시 **`abstract class`여야 한다**. (`abstract` 키워드를 써야 함)
+1. `abstract` 메서드는 자식에게 반드시 **`override` 해야 한다**.
+
+### abstract 클래스
+```csharp
+public abstract class Character : MonoBehaviour
+{
+}
+```
+- `abstract class`는 직접 인스턴스를 만들 수 없는 클래스이다.
+```csharp
+// Character character = new Character(); // 컴파일 에러
+```
+- 이 클래스는 **공통 기능을 담은 부모 틀**로만 존재하고, 실제로 게임에 등장하는건 이걸 **상속하는 구체적인 클래스**이다.
+
+### abstract 메서드
+```csharp
+protected abstract void Update();
+protected abstract void FixedUpdate();
+```
+- `{}`와 안의 코드가 존재하지 않는다.
+- 부모가 상속받는 자식에게 세부구현을 하라고 강제한다.
+```csharp
+public class Player : Character
+{
+    protected override void Update()
+    {
+        // Player만의 이동 로직
+    }
+
+    protected override void FixedUpdate()
+    {
+        // Player만의 물리 이동 로직
+    }
+}
+```
+- 자식이 `Update()`와 `FixedUpdate()`를 구현하지 않으면 컴파일 에러가 일어난다.
+- `override`를 통해 부모 클래스에 있던 메서드를 자식 클래스에서 구현한다.
+
+---
+
+## virtual
+부모가 **기본 동작을 이미 구현해두지만, 자식이 그대로 써도 되고 원하면 재정의(override)해도 되는 키워드**이다.
+
+### virtual 예시
+```csharp
+protected virtual void Awake()
+{
+    animator = GetComponentInChildren<Animator>();
+    rigidbody2D = GetComponent<Rigidbody2D>();
+}
+```
+- 부모가 기본동작을 미리 구현 한다.
+- 자식은 이걸 그대로 써도 되고 재정의(`override`)해도 된다.
+
+```csharp
+public class Player : Character
+{
+    // Awake를 override 안 해도 됨 → 부모의 Awake 그대로 사용
+}
+```
+- 재정의(`override`)를 안하면 부모의 기본동작 `Awake()`을 그대로 사용한다.
+```csharp
+public class Player : Character
+{
+    protected override void Awake()
+    {
+        base.Awake(); // 부모 기능 유지
+        AwakeBindInput(); // 추가 기능
+    }
+}
+```
+- 재정의(`override`)를 해서 `AwakeBindInput()`을 넣고 부모의 기능도 `base.Awake()`로 그대로 사용 가능하다.
+
+---
+
+## override
+`override`는 부모의 `virtual` 또는 `abstract` 메서드를 **자식 클래스에서 실제로 재구현한다는 표시**이다.  
+`override`를 쓰려면 반드시 **부모 쪽 메서드가 `virtual`이거나 `abstract`여야 한다.** 일반 메서드는 불가능하다.
+
+### override 규칙
+1. **메서드 이름, 파라미터, 반환형이 부모와 정확히 같아야 한다.**
+1. 부모가 **`virtual`/`abstract`가 아니면 `override`가 불가능** 하다.
+1. `override`한 메서드는 다시 **그 자식의 자식이 `override`할 수도 있다.**(연쇄 가능)
+
+### base.메서드()
+`override`는 **새로 만드는게 아닌 다시 구현** 하는 의미라서,   
+부모가 만든 메서드를 완전히 없애고 싶지 않으면 **`base.메서드()`로 부모 기능을 먼저 실행해야 한다**  
+`base.메서드()`를 빼면 부모의 코드가 실행이 안된다.
+
+
+### override 예시
+```csharp
+protected virtual void Awake()
+{
+    animator = GetComponentInChildren<Animator>();
+    rigidbody2D = GetComponent<Rigidbody2D>();
+}
+```
+```csharp
+protected override void Awake()  //부모 메서드를 재구현 하므로 override 사용
+{
+    base.Awake();
+    AwakeBindInput();
+}
+```
+- 부모 메서드인 `Awake()`를 재정의 해야하므로 자식 메서드에서는 `override`를 사용 하였다.
+- `base.Awake()`를 빼면 부모의 코드가 실행이 안된다.
+---
