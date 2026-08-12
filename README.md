@@ -54,15 +54,19 @@
 
 
 ### 클래스와 객체지향
-- [접근제한(캡슐화)](./Unity_Class.md#접근제한캡슐화)
+- [캡슐화(접근제한)](./Unity_Class.md#캡슐화접근제한)
     - [private](./Unity_Class.md#private)
     - [protected](./Unity_Class.md#protected)
     - [public](./Unity_Class.md#public)
+- [상속](./Unity_Class.md#상속)
+- [다형성](./Unity_Class.md#다형성)
+    -  [abstract](./Unity_Class.md#abstract)
+    - [virtual](./Unity_Class.md#virtual)
+    - [override](./Unity_Class.md#override)
 
-### 상속 / 다형성
-- [abstract](./Unity_Class.md#abstract)
-- [virtual](./Unity_Class.md#virtual)
-- [override](./Unity_Class.md#override)
+    
+
+
 
 ### 람다 / 델리게이트 / 제네릭
 - [람다, 델리게이트, 캡처, 클로저](./Unity_Class.md#람다-델리게이트-캡처-클로저)
