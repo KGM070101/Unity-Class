@@ -2235,6 +2235,7 @@ public class GameManager : MonoBehaviour
 1. `abstract` 메서드는 **몸통`{}`이 없어야 한다**.
 1. `abstract` 메서드는 가진 클래스를 반드시 **`abstract class`여야 한다**. (`abstract` 키워드를 써야 함)
 1. `abstract` 메서드는 자식에게 반드시 **`override` 해야 한다**.
+[override](./Unity_Class.md#override)
 
 ### abstract 클래스
 ```csharp
