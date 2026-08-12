@@ -1263,6 +1263,64 @@ Array.Clear(배열, 시작인덱스, 개수);
 - `arr.Clone()` : 배열 복사본 생성
 
 ---
+## Partial
+
+`partial`은 **하나의 클래스를 여러 파일로 나눠서 작성할 수 있게 해주는 문법**이다.  
+컴파일할 때는 여러 파일에 **나눠진 조각들이 전부 합쳐져서 하나의 클래스가 된다**.
+
+### 쓸 때 규칙
+
+1. 모든 써야하는 클래스 코드에 **`partial`키워드가 있어야함**
+```csharp
+public partial class Player // O
+public class Player         // 다른 파일에 이렇게 쓰면 에러
+```
+2. 클래스 **이름이 완전히 같아야 함** (이름이 다르면 서로 다른 클래스로 인식이 돼서 합쳐지지 않는다.)
+```csharp
+public partial class Player  // 파일 A
+public partial class Player  // 파일 B
+```
+3. **같은 네임스페이스, 같은 어셈블리(프로젝트) 안에 있어야 함**
+    - 유니티 기준 서로 다른 어셈블리로 나뉜 프로젝트 끼리는 `partial`로 하나로 합칠 수 없다.
+4. **접근 제한자**가 같아야 함
+```csharp
+public partial class Player  // 파일 A
+internal partial class Player // 파일 B → 에러
+```
+5. 상속은 **한 곳에서만 명시해도 전체에 적용**됨
+```csharp
+public partial class Player : Character // 상속은 한 번만 써도 됨
+{
+}
+
+public partial class Player // 여기선 다시 안 써도 Character 상속 유지
+{
+}
+```
+
+partial 예시
+```csharp
+public partial class Player : Character
+{
+    protected override void Awake()
+    {
+        base.Awake();
+        AwakeBindInput();
+    }
+}
+```
+```csharp
+public partial class Player
+{
+    private void AwakeBindInput()
+    {
+        // 입력 연결 코드
+    }
+}
+```
+- 두 클래스가 `partial`키워드로 선언 돼서 컴파일 후 하나의 완성된 `Player`클래스가 된다.
+
+---
 
 ## Coroutine
 
@@ -2075,3 +2133,94 @@ datas2.PrintAll();
 | 타입 검사      | 컴파일 단계에서 강함 | 런타임까지 미뤄짐          |
 | 형변환 필요성  | 적음                  | 많을 수 있음              |
 | 안정성         | 더 높음               | 더 낮음                    |
+
+---
+
+## 접근제한(캡슐화)
+**캡슐화**는 데이터와 그 데이터를 다루는 기능을 하나로 묶고, **외부에서 함부로 접근할 수 없게 하는 것**이다.
+
+---
+
+### private
+**같은 클래스 내부에서만** 접근이 가능하게 하는 제한자
+
+#### 예시
+```csharp
+public class Player
+{
+    private int hp = 100;
+
+    private void Heal()
+    {
+        hp += 10;
+    }
+}
+```
+```csharp
+Player player = new Player();
+
+// player.hp = 999;   // 컴파일 에러, private이라 외부 접근 불가
+// player.Heal();      // 컴파일 에러, private이라 외부 접근 불가
+```
+- `hp`,`Heal()` 은 오직 `Player` 클래스 내부 코드에서만 사용할 수 있다.
+
+---
+
+### protected
+**같은 클래스 + 상속받은 자식 클래스에서** 접근이 가능하게 하는 제한자
+
+#### 예시
+```csharp
+public class Character
+{
+    protected bool bMove;
+
+    protected void Flip()
+    {
+    }
+}
+```
+```csharp
+public class Player : Character
+{
+    public void Test()
+    {
+        bMove = true; // 가능, 자식 클래스라서
+        Flip();       // 가능
+    }
+}
+```
+```csharp
+Player player = new Player();
+// player.bMove = true; // 에러, 외부 코드에서는 protected 접근 불가
+```
+- `Player`는 `Character`클래스를 상속한 자식 클래스 이기 때문에 `bMove`와 `Flip()`을 사용할 수 있다.
+- `protected`멤버는 자기 클래스 내부와 파생 클래스 내부에서만 접근할 수 있다.
+
+---
+
+### public
+**어디서든** 접근이 가능하게 하는 제한자
+
+#### 예시
+```csharp
+public class Character
+{
+    public void Move()
+    {
+        bMove = true;
+    }
+}
+```
+```csharp
+public class GameManager : MonoBehaviour
+{
+    public Player player;
+
+    private void Start()
+    {
+        player.Move(); // 가능, public이니까 어디서든 호출 가능
+    }
+}
+```
+- `Move()`의 접근 제한자가 `public`이기 때문에, 다른 스크립트에서도 자유롭게 `Move()`를 호출할 수 있다.

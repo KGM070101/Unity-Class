@@ -50,6 +50,14 @@
 - [배열 선언 방법](./Unity_Class.md#배열-선언-방법)
 - [배열 복사 / Clone / Sort / CopyTo / Clear](./Unity_Class.md#배열-복사)
 - [배열 관련 표현 정리](./Unity_Class.md#배열-관련-자주-쓰는-표현-정리)
+- [Partial](./Unity_Class.md#partial)
+
+
+### 클래스와 객체지향
+- [접근제한(캡슐화)](./Unity_Class.md#접근제한캡슐화)
+    - [private](./Unity_Class.md#private)
+    - [protected](./Unity_Class.md#protected)
+    - [public](./Unity_Class.md#public)
 
 ### 람다 / 델리게이트 / 제네릭
 - [람다, 델리게이트, 캡처, 클로저](./Unity_Class.md#람다-델리게이트-캡처-클로저)
