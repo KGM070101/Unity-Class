@@ -103,4 +103,23 @@
     - [벽 상태 종료에 적용](./Unity_Class.md#11-벽-상태-종료에-적용)
     - [방향 기준값 0.9의 주의점](./Unity_Class.md#12-방향-기준값-09의-주의점)
     
+### FSM
+- [FSM](./Unity_Class.md#1-fsm의-개념)
+  - [FSM의 개념](./Unity_Class.md#1-fsm의-개념)
+  - [FSM의 구성 요소](./Unity_Class.md#2-fsm의-구성-요소)
+  - [FSM과 상태 패턴의 관계](./Unity_Class.md#3-fsm과-상태-패턴의-관계)
+  - [상태의 기본 함수](./Unity_Class.md#4-상태의-기본-함수)
+  - [상태 클래스의 공통 틀](./Unity_Class.md#5-상태-클래스의-공통-틀)
+  - [FSM의 기본 구현](./Unity_Class.md#6-fsm의-기본-구현)
+  - [상태 객체 준비와 제어 대상 연결](./Unity_Class.md#7-상태-객체-준비와-제어-대상-연결)
+  - [최초 상태 등록](./Unity_Class.md#8-최초-상태-등록)
+  - [상태 전환의 실행 순서](./Unity_Class.md#9-상태-전환의-실행-순서)
+  - [같은 상태로 반복 전환하지 않는 이유](./Unity_Class.md#10-같은-상태로-반복-전환하지-않는-이유)
+  - [Tick(dt)와 시간 전달](./Unity_Class.md#11-tickdt와-시간-전달)
+  - [상태 선택과 상태 실행 분리](./Unity_Class.md#12-상태-선택과-상태-실행-분리)
+  - [상태 진입 조건](./Unity_Class.md#13-상태-진입-조건)
+  - [Enter와 Exit의 데이터 처리](./Unity_Class.md#14-enter와-exit의-데이터-처리)
+  - [상태 종료 이유 구분](./Unity_Class.md#15-상태-종료-이유-구분)
+  - [FSM과 실제 이동 처리의 차이](./Unity_Class.md#16-fsm과-실제-이동-처리의-차이)
+  - [테스트 시 확인할 항목](./Unity_Class.md#17-테스트-시-확인할-항목)
 
