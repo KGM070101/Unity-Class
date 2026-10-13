@@ -87,3 +87,20 @@
   - [제네릭 없이 `object`를 쓰는 클래스 `C`](./Unity_Class.md#4-제네릭-없이-object를-쓰는-클래스-c)
   - [`B<T>`와 `C` 비교](./Unity_Class.md#5-bt와-c-비교)
 
+### 정규화 · 법선 벡터 · 내적
+- [정규화 · 법선 벡터 · 내적](./Unity_Class.md#정규화--법선-벡터--내적)
+    - [개념 연결](./Unity_Class.md#1-개념-연결)
+    - [벡터(Vector2)](./Unity_Class.md#2-벡터vector2)
+    - [벡터의 길이: magnitude와 sqrMagnitude](./Unity_Class.md#3-벡터의-길이-magnitude와-sqrmagnitude)
+    - [기준값도 제곱해서 비교](./Unity_Class.md#기준값도-제곱해서-비교)
+    - [정규화(Normalization)](./Unity_Class.md#4-정규화normalization)
+    - [법선 벡터(Normal Vector)](./Unity_Class.md#5-법선-벡터normal-vector)
+    - [Unity에서 법선 가져오기](./Unity_Class.md#6-unity에서-법선-가져오기)
+    - [내적(Dot Product)](./Unity_Class.md#7-내적dot-product)
+    - [내적 전에 정규화하는 이유](./Unity_Class.md#8-내적-전에-정규화하는-이유)
+    - [입력 크기를 먼저 검사하는 이유](./Unity_Class.md#9-입력-크기를-먼저-검사하는-이유)
+    - [벽 상태 진입에 적용](./Unity_Class.md#10-벽-상태-진입에-적용)
+    - [벽 상태 종료에 적용](./Unity_Class.md#11-벽-상태-종료에-적용)
+    - [방향 기준값 0.9의 주의점](./Unity_Class.md#12-방향-기준값-09의-주의점)
+    
+

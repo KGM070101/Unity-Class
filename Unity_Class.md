@@ -2356,3 +2356,629 @@ protected override void Awake()  //부모 메서드를 재구현 하므로 overr
 - 부모 메서드인 `Awake()`를 재정의 해야하므로 자식 메서드에서는 `override`를 사용 하였다.
 - `base.Awake()`를 빼면 부모의 코드가 실행이 안된다.
 ---
+
+## 정규화 · 법선 벡터 · 내적
+
+### 1. 개념 연결
+
+**법선 벡터는 표면에 수직인 방향을 나타내고, 정규화는 벡터 길이를 1로 맞추며, 내적은 두 벡터의 방향과 크기 관계를 숫자로 계산함.**
+
+게임에서는 다음 순서로 연결해서 사용함.
+
+```text
+벽의 법선 벡터와 플레이어 입력 벡터 준비
+    ↓
+입력이 충분한지 확인
+    ↓
+두 벡터 정규화
+    ↓
+Dot으로 내적 계산
+    ↓
+결과를 기준값과 비교
+    ↓
+벽 상태 진입·종료 등의 행동 결정
+```
+
+---
+
+### 2. 벡터(Vector2)
+
+벡터는 방향과 크기를 가진 값임.
+
+Unity의 `Vector2`는 X와 Y 두 성분으로 구성됨.
+
+```csharp
+Vector2 direction = new Vector2(1f, 0f);
+```
+
+| 벡터 | 방향 | 길이 |
+|---|---|---:|
+| `(1, 0)` | 오른쪽 | 1 |
+| `(-1, 0)` | 왼쪽 | 1 |
+| `(0, 1)` | 위쪽 | 1 |
+| `(0, -1)` | 아래쪽 | 1 |
+| `(1, 1)` | 오른쪽 위 | 약 1.414 |
+| `(0, 0)` | 방향 없음 | 0 |
+
+`Vector2`가 항상 방향만 의미하는 것은 아님.
+
+사용 목적에 따라 위치, 방향, 속도 등을 표현함.
+
+```csharp
+Vector2 position;  // 위치
+Vector2 moveDir;   // 입력 방향
+Vector2 velocity; // 속도
+```
+
+---
+
+## 3. 벡터의 길이: magnitude와 sqrMagnitude
+
+벡터가 `(x, y)`일 때 피타고라스 정리를 이용해 길이를 계산함.
+
+### magnitude
+
+벡터의 실제 길이를 반환함.
+
+```text
+magnitude = √(x² + y²)
+```
+
+```csharp
+Vector2 vector = new Vector2(3f, 4f);
+
+Debug.Log(vector.magnitude); // 5
+```
+
+### sqrMagnitude
+
+벡터 길이의 제곱을 반환함.
+
+```text
+sqrMagnitude = x² + y²
+```
+
+```csharp
+Vector2 vector = new Vector2(3f, 4f);
+
+Debug.Log(vector.sqrMagnitude); // 25
+```
+
+길이의 크기만 비교할 때는 제곱근 계산을 생략할 수 있는 `sqrMagnitude`를 사용함.
+
+### 기준값도 제곱해서 비교
+
+다음 두 조건은 같은 의미임.
+
+```csharp
+moveDir.magnitude > 0.1f
+```
+
+```csharp
+moveDir.sqrMagnitude > 0.1f * 0.1f
+```
+
+즉 다음 조건은 입력 벡터의 길이가 `0.1`보다 큰지 검사함.
+
+```csharp
+moveDir.sqrMagnitude > 0.01f
+```
+
+> `sqrMagnitude > 0.1f`는 길이가 0.1보다 크다는 의미가 아님.
+> 실제 길이가 약 0.316보다 큰지 검사하는 조건임.
+
+---
+
+## 4. 정규화(Normalization)
+
+정규화는 벡터의 방향을 유지하면서 길이를 1로 맞추는 작업임.
+
+길이가 1인 벡터를 단위 벡터라고 부름.
+
+```text
+정규화 전:
+방향과 원래 크기를 가짐.
+
+정규화 후:
+방향은 유지하고 길이를 1로 맞춤.
+```
+
+### 정규화 예시
+
+```csharp
+Vector2 vector = new Vector2(3f, 4f);
+Vector2 direction = vector.normalized;
+```
+
+```text
+vector:
+(3, 4)
+길이 = 5
+
+direction:
+(0.6, 0.8)
+길이 = 1
+```
+
+각 성분을 원래 벡터의 길이로 나누어 계산함.
+
+```text
+(3 ÷ 5, 4 ÷ 5)
+= (0.6, 0.8)
+```
+
+### normalized와 Normalize()의 차이
+
+```csharp
+Vector2 vector = new Vector2(3f, 4f);
+
+Vector2 direction = vector.normalized;
+```
+
+`.normalized`는 정규화된 값을 반환함. 원본 `vector`는 변경하지 않음.
+
+```csharp
+vector.Normalize();
+```
+
+`.Normalize()`는 원본 `vector` 자체를 정규화함.
+
+| 사용 방식 | 원본 변경 여부 |
+|---|---|
+| `vector.normalized` | 변경하지 않음 |
+| `vector.Normalize()` | 변경함 |
+
+### 영벡터 정규화
+
+```csharp
+Vector2 vector = Vector2.zero;
+Vector2 direction = vector.normalized;
+```
+
+영벡터 `(0, 0)`에는 방향이 없음.
+
+Unity에서는 정규화하기에 너무 작은 벡터에 대해 영벡터를 반환함.
+
+### 정규화 사용 목적
+
+벡터의 원래 길이 영향을 제거하고 방향만 비교하기 위해 사용함.
+
+```text
+(1, 0)
+(5, 0)
+
+둘 다 오른쪽이지만 길이는 다름.
+정규화하면 둘 다 (1, 0)이 됨.
+```
+
+---
+
+## 5. 법선 벡터(Normal Vector)
+
+법선 벡터는 표면에 수직인 벡터임.
+
+표면에 화살표를 직각으로 꽂은 모습으로 이해할 수 있음.
+
+### 바닥 위쪽 면의 법선
+
+```text
+        ↑ 법선
+        │
+──────────────── 바닥
+```
+
+```csharp
+Vector2 normal = new Vector2(0f, 1f);
+```
+
+### 플레이어 오른쪽 벽의 플레이어 쪽 면
+
+```text
+플레이어          벽
+   [P]      ←────│
+             법선│
+```
+
+```csharp
+Vector2 normal = new Vector2(-1f, 0f);
+```
+
+### 플레이어 왼쪽 벽의 플레이어 쪽 면
+
+```text
+벽          플레이어
+│────→         [P]
+│ 법선
+```
+
+```csharp
+Vector2 normal = new Vector2(1f, 0f);
+```
+
+> 표면에 수직인 방향은 서로 반대인 두 방향이 존재함.
+> 법선의 부호는 어느 면과 접촉 정보를 기준으로 보는지에 따라 확인해야 함.
+
+### 경사면의 법선
+
+법선이 항상 위·아래·좌·우 중 하나인 것은 아님.
+
+경사면에서는 법선도 비스듬한 방향을 가짐.
+
+```text
+경사면을 따라가는 방향: (1, 1)
+여기에 수직인 한 방향: (-1, 1)
+```
+
+두 벡터의 내적을 계산하면 다음과 같음.
+
+```text
+1 × (-1) + 1 × 1 = 0
+```
+
+두 벡터가 모두 영벡터가 아닌 상태에서 내적이 0이므로 서로 수직임.
+
+### 법선과 정규화의 차이
+
+| 개념 | 의미 |
+|---|---|
+| 법선 | 표면에 수직인 벡터 |
+| 정규화 | 벡터 길이를 1로 맞추는 작업 |
+| 단위 법선 | 길이가 1인 법선 벡터 |
+
+수학적으로 법선이라는 이유만으로 길이가 반드시 1인 것은 아님.
+
+```text
+(0, 1)
+(0, 3)
+
+둘 다 평평한 바닥에 수직인 위쪽 방향임.
+길이는 각각 1과 3으로 다름.
+```
+
+---
+
+## 6. Unity에서 법선 가져오기
+
+### 실제 충돌의 접촉 법선
+
+```csharp
+private void OnCollisionEnter2D(Collision2D collision)
+{
+    Vector2 normal = collision.GetContact(0).normal;
+}
+```
+
+```text
+GetContact(0):
+첫 번째 접촉점 정보를 가져옴.
+
+.normal:
+해당 접촉점의 법선 벡터를 가져옴.
+```
+
+접촉점이 여러 개라면 첫 번째 접촉점만으로 전체 충돌을 판단하기에 부족할 수 있음.
+
+### Cast 검사의 법선
+
+```csharp
+Vector2 normal = hit.normal;
+```
+
+`hit`이 `RaycastHit2D` 검사 결과라면 감지한 표면의 법선을 사용할 수 있음.
+
+실제 접촉이 없어도 Cast 결과를 이용해 벽 방향을 판단할 수 있음.
+
+---
+
+## 7. 내적(Dot Product)
+
+내적은 두 벡터를 받아 숫자 하나를 계산하는 연산임.
+
+Unity에서는 `Vector2.Dot()`을 사용함.
+
+```csharp
+float result = Vector2.Dot(a, b);
+```
+
+반환값은 `Vector2`가 아니라 `float`임.
+
+### 내적 계산
+
+```text
+a · b = a.x × b.x + a.y × b.y
+```
+
+다음 두 코드는 같은 계산을 수행함.
+
+```csharp
+float result = Vector2.Dot(a, b);
+```
+
+```csharp
+float result = a.x * b.x + a.y * b.y;
+```
+
+### 길이가 1인 벡터끼리 비교
+
+| 방향 관계 | 예시 | 내적 |
+|---|---|---:|
+| 완전히 같은 방향 | →와 → | 1 |
+| 45도 차이 | →와 ↗ | 약 0.707 |
+| 수직 | →와 ↑ | 0 |
+| 완전히 반대 방향 | →와 ← | -1 |
+
+```csharp
+Vector2.Dot(Vector2.right, Vector2.right); //  1
+Vector2.Dot(Vector2.right, Vector2.up);    //  0
+Vector2.Dot(Vector2.right, Vector2.left);  // -1
+```
+
+### 내적과 각도의 관계
+
+내적은 각도 자체를 반환하지 않음.
+
+```csharp
+float result = Vector2.Dot(a, b);
+```
+
+`result`를 도 단위 각도로 해석하면 안 됨.
+
+내적과 각도의 관계는 다음과 같음.
+
+```text
+a · b = |a| × |b| × cos(θ)
+
+|a|, |b|:
+각 벡터의 길이.
+
+θ:
+두 벡터 사이 각도.
+```
+
+두 벡터의 길이가 모두 1이면 다음과 같이 단순해짐.
+
+```text
+a · b = cos(θ)
+```
+
+정규화된 두 벡터의 내적이 `0.9`보다 크면 사이 각도가 약 25.8도보다 작다는 의미임.
+
+---
+
+## 8. 내적 전에 정규화하는 이유
+
+내적은 방향뿐 아니라 벡터 길이에도 영향을 받음.
+
+### 정규화하지 않은 예시
+
+```csharp
+Vector2 normal = new Vector2(-1f, 0f);
+Vector2 input = new Vector2(-0.5f, 0f);
+
+float result = Vector2.Dot(normal, input);
+```
+
+```text
+(-1 × -0.5) + (0 × 0)
+= 0.5
+```
+
+두 벡터 모두 왼쪽을 향하지만 길이가 달라 내적 결과가 1이 나오지 않음.
+
+### 정규화한 예시
+
+```csharp
+float result = Vector2.Dot(
+    normal.normalized,
+    input.normalized
+);
+```
+
+```text
+normal.normalized = (-1, 0)
+input.normalized  = (-1, 0)
+
+내적 = 1
+```
+
+두 벡터의 길이를 1로 맞춰 원래 크기의 영향을 제거함.
+
+### 올바른 처리 순서
+
+```text
+두 벡터 정규화
+    ↓
+내적 계산
+    ↓
+결과 숫자를 기준값과 비교
+```
+
+### 잘못된 사용
+
+```csharp
+float result = Vector2.Dot(a, b);
+
+result.normalized; // 사용 불가
+```
+
+`result`는 `float`이므로 `.normalized`를 사용할 수 없음.
+
+정규화할 대상은 내적 결과가 아니라 내적에 전달할 벡터임.
+
+---
+
+## 9. 입력 크기를 먼저 검사하는 이유
+
+```csharp
+if (moveDir.sqrMagnitude > 0.01f)
+{
+    // 방향 비교
+}
+```
+
+입력이 없거나 너무 약한 경우를 제외하기 위한 조건임.
+
+정규화하면 원래 입력 크기가 사라지므로 먼저 검사함.
+
+```text
+약한 입력: (0.05, 0)
+    ↓ 정규화
+방향: (1, 0)
+```
+
+위 입력은 매우 약하지만 정규화 후에는 길이가 1이 됨.
+
+따라서 다음 순서로 처리함.
+
+```text
+sqrMagnitude:
+입력이 충분한지 검사.
+
+normalized:
+입력 방향만 남김.
+
+Dot:
+다른 방향과 얼마나 일치하는지 계산.
+```
+
+`0.01f`는 예시 기준이며 입력 설정에 맞춰 조절함.
+
+---
+
+## 10. 벽 상태 진입에 적용
+
+오른쪽 벽을 향해 오른쪽으로 입력하는 상황을 가정함.
+
+```text
+벽 법선 normal: 왼쪽 (-1, 0)
+입력 moveDir:   오른쪽 (1, 0)
+```
+
+벽 법선과 입력이 반대 방향임.
+
+```csharp
+float result = Vector2.Dot(
+    normal.normalized,
+    moveDir.normalized
+);
+```
+
+```text
+result = -1
+```
+
+다음 조건으로 벽을 향하는 입력을 검사할 수 있음.
+
+```csharp
+result < -0.9f
+```
+
+### 입력을 반전해서 비교
+
+```csharp
+Vector2.Dot(
+    normal.normalized,
+    -moveDir.normalized
+) > 0.9f
+```
+
+벡터 앞의 `-`는 방향을 반전함.
+
+```text
+moveDir  = (1, 0)  → 오른쪽
+-moveDir = (-1, 0) → 왼쪽
+```
+
+다음 두 조건은 같은 의미임.
+
+```text
+Dot(normal, input) < -0.9
+→ 법선과 입력이 거의 반대 방향인지 검사.
+
+Dot(normal, -input) > 0.9
+→ 법선과 반전한 입력이 거의 같은 방향인지 검사.
+```
+
+입력이 충분하고 가까운 벽을 감지했다는 조건까지 만족할 때 벽 상태 진입을 처리함.
+
+---
+
+## 11. 벽 상태 종료에 적용
+
+오른쪽 벽에서 왼쪽으로 입력하는 상황을 가정함.
+
+```text
+벽 법선: 왼쪽
+입력:    왼쪽
+
+내적 = 1
+```
+
+벽에서 떨어지는 입력을 확인하는 코드임.
+
+```csharp
+if (moveDir.sqrMagnitude > 0.01f)
+{
+    Vector2 normalDirection = wall.wallNormal.normalized;
+    Vector2 inputDirection = moveDir.normalized;
+
+    float result = Vector2.Dot(
+        normalDirection,
+        inputDirection
+    );
+
+    if (result > 0.9f)
+    {
+        fsm.ChangeStateNoExit(move);
+    }
+}
+```
+
+각 단계의 역할은 다음과 같음.
+
+| 코드 | 역할 |
+|---|---|
+| `sqrMagnitude > 0.01f` | 입력 크기가 충분한지 검사 |
+| `.normalized` | 벡터 길이를 1로 맞춤 |
+| `Vector2.Dot()` | 두 방향의 관계를 계산 |
+| `result > 0.9f` | 거의 같은 방향인지 판단 |
+| `ChangeStateNoExit(move)` | 기존 FSM에서 이동 상태로 전환 |
+
+이 조건은 벽에서 멀어지는 입력을 검사함.
+
+벽이 사라지거나 캐릭터가 벽 끝을 지난 상황은 별도의 벽 감지 검사로 처리해야 함.
+
+---
+
+## 12. 방향 기준값 0.9의 주의점
+
+`0.9f`는 필수값이 아니라 방향 일치 범위를 정하는 기준임.
+
+```text
+기준값이 높음:
+거의 같은 방향만 인정함.
+
+기준값이 낮음:
+더 비스듬한 방향도 인정함.
+```
+
+정규화된 두 벡터의 각도 차이가 45도이면 내적은 약 0.707임.
+
+```text
+오른쪽과 오른쪽 위 비교
+→ 내적 약 0.707
+```
+
+따라서 다음 조건은 45도 대각선을 인정하지 않음.
+
+```csharp
+result > 0.9f
+```
+
+대각선 입력도 벽 방향 입력으로 인정하려면 다음 방법을 고려함.
+
+- 내적 기준값을 낮춤.
+- 가로 입력 성분만 비교함.
+- 벽 부착에 필요한 입력 조건을 별도로 정의함.
+
+정규화는 길이 영향을 제거하는 작업이며, 대각선 입력을 자동으로 인정하게 만드는 작업은 아님.
